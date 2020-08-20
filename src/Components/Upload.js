@@ -1,6 +1,8 @@
-import React, {Component} from 'react';
-import axios from 'axios'
-import {storage} from '../firebase'
+import React, {Component, useState} from 'react';
+import axios from 'axios';
+import UserCard from './UserCard'
+import {storage} from '../firebase';
+import {Input,Button,Icon,Header,Image,Container} from "semantic-ui-react"  
 class Upload extends Component{
     state = {
         selectedFile:null,
@@ -13,15 +15,11 @@ class Upload extends Component{
         this.setState({selectedFile:event.target.files[0]})
     }
     fileUploadHandler = () => {
-        // console.log(this.state.selectedFile)
-        // const fd = new FormData()
-        // fd.append("image",this.state.selectedFile, this.state.selectedFile.name)
-        // this.setState({img:fd})
-        // this.fetch()
         const uploadTask = storage.ref(`images/${this.state.selectedFile.name}`).put(this.state.selectedFile)
         uploadTask.on("state_changed",(snapshot)=> {
             //progress 
-            console.log(snapshot)
+            console.log(parseInt((snapshot.bytesTransferred/snapshot.totalBytes)*100))
+            console.log(snapshot.totalBytes)
         },
         (error)=> {
             console.log(error)
@@ -71,10 +69,35 @@ class Upload extends Component{
       }
     render(){
         return(
-            <div>
-                <input type="file" onChange={this.fileSelectedHander}/>
-                <button onClick={this.fileUploadHandler}>Upload</button>
-            </div>
+            <Container>
+                <input style={{display:"none"}} type="file" onChange={this.fileSelectedHander}
+                ref={fileInput => this.fileInput = fileInput}/>
+                <Header as='h2' icon textAlign='center'>
+                    <Icon name='id badge' circular />
+                    <Header.Content>Face Recognition</Header.Content>
+                 </Header>
+                <Image
+                    centered
+                    size='large'
+                    src='https://www.eyewitness-oman.com/wp-content/uploads/2018/04/FaceRecognition.png'
+                />
+                <div>
+                    <Button animated secondary onClick={()=> this.fileInput.click()}>
+                        <Button.Content visible>Choose File</Button.Content>
+                        <Button.Content hidden>
+                        <Icon name='file' />
+                        </Button.Content>
+                    </Button>
+                    <Button animated primary onClick={this.fileUploadHandler}>
+                        <Button.Content visible>Upload</Button.Content>
+                        <Button.Content hidden>
+                        <Icon name='upload' />
+                        </Button.Content>
+                    </Button>
+                    <UserCard data={this.state.res}/>
+                </div>
+
+            </Container>
           
         )
     }
