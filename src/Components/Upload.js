@@ -2,12 +2,13 @@ import React, {Component, useState} from 'react';
 import axios from 'axios';
 import UserCard from './UserCard'
 import {storage} from '../firebase';
-import {Input,Button,Icon,Header,Image,Container} from "semantic-ui-react"  
+import {Input,Button,Icon,Header,Image,Container,Progress} from "semantic-ui-react"  
 class Upload extends Component{
     state = {
         selectedFile:null,
         url:"",
-        res:null
+        res:null,
+        progress:0
 
     }
     fileSelectedHander = event => {
@@ -18,8 +19,10 @@ class Upload extends Component{
         const uploadTask = storage.ref(`images/${this.state.selectedFile.name}`).put(this.state.selectedFile)
         uploadTask.on("state_changed",(snapshot)=> {
             //progress 
+            var progress = parseInt((snapshot.bytesTransferred/snapshot.totalBytes)*100)
             console.log(parseInt((snapshot.bytesTransferred/snapshot.totalBytes)*100))
             console.log(snapshot.totalBytes)
+            this.setState({progress:progress})
         },
         (error)=> {
             console.log(error)
@@ -30,9 +33,7 @@ class Upload extends Component{
                 console.log(url)
                 if (this.state.url) {
                     this.fetch()
-
                 }
-
             })
         })
     }
@@ -81,21 +82,23 @@ class Upload extends Component{
                     size='large'
                     src='https://www.eyewitness-oman.com/wp-content/uploads/2018/04/FaceRecognition.png'
                 />
-                <div>
-                    <Button animated secondary onClick={()=> this.fileInput.click()}>
-                        <Button.Content visible>Choose File</Button.Content>
+                <div className="uploadFormWrapper">
+                    <Button animated secondary onClick={()=> this.fileInput.click()} >
+                        <Button.Content visible >Choose File</Button.Content>
                         <Button.Content hidden>
                         <Icon name='file' />
                         </Button.Content>
                     </Button>
-                    <Button animated primary onClick={this.fileUploadHandler}>
+                    <Button animated primary onClick={this.fileUploadHandler}  className="uploadButton"  disabled={!this.state.selectedFile}>
                         <Button.Content visible>Upload</Button.Content>
                         <Button.Content hidden>
                         <Icon name='upload' />
                         </Button.Content>
                     </Button>
-                    <UserCard data={this.state.res}/>
                 </div>
+                {this.state.selectedFile ? <Progress percent={this.state.progress} autoSuccess  progress/> : null}
+                <UserCard data={this.state.res} image={this.state.url}/>
+
 
             </Container>
           
