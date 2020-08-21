@@ -20,7 +20,6 @@ class UserCard extends React.Component {
                      image={this.props.image}
                       header={"Age: " + this.props.data.data[0].faceAttributes.age + " | Gender: " + this.props.data.data[0].faceAttributes.gender}
                     // meta='Friend'
-                     description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
                  />
                  <h3></h3>
               
