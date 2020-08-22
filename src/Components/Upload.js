@@ -61,7 +61,6 @@ class Upload extends Component{
           this.setState({res:response})
 
         }).then(()=>{
-            alert(this.state.res.data[0].faceAttributes.age)
 
         })
         .catch((error)=>{
@@ -73,7 +72,7 @@ class Upload extends Component{
             <Container>
                 <input style={{display:"none"}} type="file" onChange={this.fileSelectedHander}
                 ref={fileInput => this.fileInput = fileInput}/>
-                <Header as='h2' icon textAlign='center'>
+                <Header as='h2' icon textAlign='center' style={{marginTop:"15px;"}}>
                     <Icon name='id badge' circular />
                     <Header.Content>Face Recognition</Header.Content>
                  </Header>
