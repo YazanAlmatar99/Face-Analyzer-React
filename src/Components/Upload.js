@@ -77,7 +77,7 @@ class Upload extends Component{
                 ref={fileInput => this.fileInput = fileInput}/>
                 <Header as='h2' icon textAlign='center' style={{marginTop:"15px"}}>
                     <Icon name='id badge' circular />
-                    <Header.Content>Face Recognition</Header.Content>
+                    <Header.Content>Face Analyzer</Header.Content>
                  </Header>
                 <Image
                     centered
