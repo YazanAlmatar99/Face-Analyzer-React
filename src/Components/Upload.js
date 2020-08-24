@@ -1,18 +1,19 @@
-import React, {Component, useState} from 'react';
+import React, {Component} from 'react';
 import axios from 'axios';
 import UserCard from './UserCard'
 import {storage} from '../firebase';
-import {Input,Button,Icon,Header,Image,Container,Progress} from "semantic-ui-react"  
+import {Button,Icon,Header,Image,Container,Progress} from "semantic-ui-react"  
 class Upload extends Component{
     state = {
         selectedFile:null,
         url:"",
         res:null,
-        progress:0
+        progress:0,
+        faceDetected: false,
+        message:""
 
     }
     fileSelectedHander = event => {
-        console.log(event.target.files[0])
         this.setState({selectedFile:event.target.files[0]})
     }
     fileUploadHandler = () => {
@@ -20,8 +21,6 @@ class Upload extends Component{
         uploadTask.on("state_changed",(snapshot)=> {
             //progress 
             var progress = parseInt((snapshot.bytesTransferred/snapshot.totalBytes)*100)
-            console.log(parseInt((snapshot.bytesTransferred/snapshot.totalBytes)*100))
-            console.log(snapshot.totalBytes)
             this.setState({progress:progress})
         },
         (error)=> {
@@ -57,10 +56,14 @@ class Upload extends Component{
         }
         })
         .then((response)=>{
-          console.log(response)
-          this.setState({res:response})
-
-        }).then(()=>{
+            console.log(response.data,"hellooooo")
+            if (response.data.length !== 0){
+                this.setState({res:response.data,faceDetected:true})
+                this.setState({message:""})
+            } else {
+                this.setState({faceDetected:false})
+                this.setState({message:"No Face Detected"})
+            }
 
         })
         .catch((error)=>{
@@ -72,7 +75,7 @@ class Upload extends Component{
             <Container>
                 <input style={{display:"none"}} type="file" onChange={this.fileSelectedHander}
                 ref={fileInput => this.fileInput = fileInput}/>
-                <Header as='h2' icon textAlign='center' style={{marginTop:"15px;"}}>
+                <Header as='h2' icon textAlign='center' style={{marginTop:"15px"}}>
                     <Icon name='id badge' circular />
                     <Header.Content>Face Recognition</Header.Content>
                  </Header>
@@ -96,8 +99,7 @@ class Upload extends Component{
                     </Button>
                 </div>
                 {this.state.selectedFile ? <Progress percent={this.state.progress} autoSuccess  progress/> : null}
-                <UserCard data={this.state.res} image={this.state.url}/>
-
+               {this.state.faceDetected? <UserCard data={this.state.res} image={this.state.url}/> : <h1>{this.state.message}</h1>}
 
             </Container>
           
